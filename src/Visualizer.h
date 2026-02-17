@@ -7,6 +7,7 @@
 class Visualizer {
     private:
         std::vector<sf::RectangleShape> bars; //store bar shapes
+        std::vector<float> previousHeights;
     
     public:
         Visualizer(int numBars, int windowWidth, int windowHeight);

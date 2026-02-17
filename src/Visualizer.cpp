@@ -11,30 +11,33 @@ Visualizer::Visualizer(int numBars, int windowWidth, int windowHeight) {
         bar.setPosition(sf::Vector2f(static_cast<float>(i) * barWidth, static_cast<float>(windowHeight)));
         bar.setFillColor(sf::Color::Green);
         bars.push_back(bar);
+        
+        previousHeights.push_back(0.0f);  //initialize all to 0
     }
 }
 
 void Visualizer::update(const std::vector<float>& frequencies) {
-    //loop through every bar
     for (size_t i = 0; i < bars.size() && i < frequencies.size(); i++) {
-        //frequency value (0 to 1)
-        float freq = frequencies[i];
-
-        //scale to height (* by window height)
-        float height = std::min(freq * 5000, 800.0f);  // Amplify and cap at 800
-
-        //set bar height
-        bars[i].setSize(sf::Vector2f(bars[i].getSize().x, height));
-
-        //move bar up to make it grow from bottom
-        bars[i].setPosition(sf::Vector2f(bars[i].getPosition().x, 800 - height));
+        float targetHeight = std::min(frequencies[i] * 5000, 800.0f);
         
-        // Debug: print first bar info
-        if (i == 0) {
-            std::cout << "Bar 0: freq=" << freq << " height=" << height 
-                      << " pos=(" << bars[i].getPosition().x << "," << bars[i].getPosition().y 
-                      << ") size=(" << bars[i].getSize().x << "," << bars[i].getSize().y << ")\n";
+        float currentHeight = previousHeights[i];
+        float newHeight = currentHeight + (targetHeight - currentHeight) * 0.2f;  //0.2 = smoothing factor
+        
+        previousHeights[i] = newHeight;
+        
+        bars[i].setSize(sf::Vector2f(bars[i].getSize().x, newHeight));
+        bars[i].setPosition(sf::Vector2f(bars[i].getPosition().x, 800 - newHeight));
+        
+        float hueValue = newHeight / 800.0f;  //0 to 1
+        sf::Color barColor;
+        if (hueValue < 0.5f) {
+            barColor = sf::Color::Blue;  
+        } else if (hueValue < 0.75f) {
+            barColor = sf::Color::Green; 
+        } else {
+            barColor = sf::Color::Red;  
         }
+        bars[i].setFillColor(barColor);
     }
 }
 
