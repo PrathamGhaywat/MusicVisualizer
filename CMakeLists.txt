@@ -8,11 +8,15 @@ set(SFML_DIR "C:/Users/Prath/SFML-3.0.2/lib/cmake/SFML")
 
 find_package(SFML 3 COMPONENTS Graphics Audio REQUIRED)
 
+file(COPY assets DESTINATION ${CMAKE_BINARY_DIR}/Debug/)
+file(COPY assets DESTINATION ${CMAKE_BINARY_DIR}/Release/)
+
 add_executable(MusicVisualizer 
     src/main.cpp 
     src/Visualizer.cpp
     src/AudioProcessor.cpp
-    src/Particle.cpp)
+    src/Particle.cpp
+    src/UIManager.cpp)
 
 target_link_libraries(MusicVisualizer PRIVATE SFML::Graphics SFML::Audio)
 

@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include "AudioProcessor.h"
 #include "Visualizer.h"
+#include "UIManager.h"
 #include <iostream>
 
 int main() {
@@ -9,26 +10,50 @@ int main() {
 
     AudioProcessor audioProcessor;
     Visualizer visualizer(64, 1200, 800);
+    UIManager uiManager;
 
-    std::cout << "Visualizer created with 64 bars\n";
-    
-    std::string filepath;
-    std::cout << "Enter audio file path: ";
-    std::getline(std::cin, filepath);
-    
-    if (!audioProcessor.loadMusic(filepath)) {
-        std::cerr << "Failed to load audio file!" << std::endl;
+    // Load font
+    if (!uiManager.loadFont("../assets/RobotoRegular.ttf")) {
+        std::cerr << "Failed to load font!" << std::endl;
         return -1;
     }
-    
-    std::cout << "Audio loaded successfully!\n";
-    audioProcessor.play();
+
+    std::cout << "Visualizer created with 64 bars\n";
+
+    // Wait for user to enter file path via UI
+    bool fileLoaded = false;
+    while (window.isOpen() && !fileLoaded) {
+        while (const auto event = window.pollEvent()) {
+            if (event->is<sf::Event::Closed>()) {
+                window.close();
+            }
+            uiManager.handleInput(*event);
+        }
+
+        if (uiManager.isInputComplete()) {
+            std::string filepath = uiManager.getUserInput();
+            
+            if (audioProcessor.loadMusic(filepath)) {
+                std::cout << "Audio loaded successfully!\n";
+                audioProcessor.play();
+                fileLoaded = true;
+            } else {
+                std::cerr << "Failed to load audio file!" << std::endl;
+                uiManager.reset();
+            }
+        }
+
+        window.clear(sf::Color::Black);
+        uiManager.draw(window);
+        window.display();
+    }
 
     sf::Clock clock;
 
+    // Main game loop
     while (window.isOpen()) {
         float deltaTime = clock.restart().asSeconds();
-        
+
         while (const auto event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>()) {
                 window.close();
