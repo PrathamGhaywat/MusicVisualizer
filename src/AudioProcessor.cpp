@@ -42,3 +42,15 @@ std::vector<float> AudioProcessor::getFrequencyData() {
     
     return frequencies;
 }
+
+void AudioProcessor::unloadMusic() {
+    if (sound) {
+        sound ->stop();
+        delete sound;
+        sound = nullptr;
+    }
+}
+
+bool AudioProcessor::isLoaded() const {
+    return sound != nullptr;
+}

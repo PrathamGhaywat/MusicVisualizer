@@ -23,6 +23,10 @@ class AudioProcessor {
 
     bool isPlaying() const;
 
+    void unloadMusic();
+
+    bool isLoaded() const;
+
     std::vector<float> getFrequencyData();
 };
 
