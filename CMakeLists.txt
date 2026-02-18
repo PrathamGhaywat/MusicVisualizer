@@ -4,8 +4,6 @@ project(MusicVisualizer)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(SFML_DIR "C:/Users/Prath/SFML-3.0.2/lib/cmake/SFML")
-
 find_package(SFML 3 COMPONENTS Graphics Audio REQUIRED)
 
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR}/Debug/)
