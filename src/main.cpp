@@ -3,6 +3,7 @@
 #include "Visualizer.h"
 #include "UIManager.h"
 #include <iostream>
+#include <vector>
 
 int main() {
     sf::RenderWindow window(sf::VideoMode({1200, 800}), "Music Visualizer");
@@ -12,9 +13,26 @@ int main() {
     Visualizer visualizer(64, 1200, 800);
     UIManager uiManager;
 
-    // Load font
-    if (!uiManager.loadFont("../assets/RobotoRegular.ttf")) {
+    std::vector<std::string> fontPaths = {
+        "assets/Roboto-Regular.ttf",
+        "../assets/Roboto-Regular.ttf",
+        "../../assets/Roboto-Regular.ttf"
+    };
+
+    bool fontLoaded = false;
+    for (const auto& path : fontPaths) {
+        if (uiManager.loadFont(path)) {
+            fontLoaded = true;
+            break;
+        }
+    }
+
+    if (!fontLoaded) {
         std::cerr << "Failed to load font!" << std::endl;
+        return -1;
+    }
+
+    if (!uiManager.loadFont("assets/Roboto-Regular.ttf")) {
         return -1;
     }
 

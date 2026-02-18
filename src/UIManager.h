@@ -12,7 +12,8 @@ private:
     sf::RectangleShape inputBox;
     std::string userInput;
     bool isInputting;
-    
+    void setupText();
+
 public:
     UIManager();
     

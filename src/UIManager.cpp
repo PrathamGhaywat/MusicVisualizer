@@ -11,25 +11,34 @@ UIManager::UIManager() : isInputting(true) {
 }
 
 bool UIManager::loadFont(const std::string& fontPath) {
-    if (!font.openFromFile(fontPath)) {
-        return false;
+    // Try to load from assets first
+    if (font.openFromFile(fontPath)) {
+        setupText();
+        return true;
     }
     
-    // Setup title text
+    // Fallback: use system font on Windows
+    if (font.openFromFile("C:\\Windows\\Fonts\\arial.ttf")) {
+        setupText();
+        return true;
+    }
+    
+    std::cerr << "Failed to load any font!" << std::endl;
+    return false;
+}
+
+void UIManager::setupText() {
     titleText.setFont(font);
     titleText.setString("Music Visualizer");
     titleText.setCharacterSize(50);
     titleText.setFillColor(sf::Color::White);
     titleText.setPosition(sf::Vector2f(300.0f, 100.0f));
     
-    // Setup instruction text
     instructionText.setFont(font);
     instructionText.setString("Enter audio file path:");
     instructionText.setCharacterSize(20);
     instructionText.setFillColor(sf::Color::White);
     instructionText.setPosition(sf::Vector2f(300.0f, 350.0f));
-    
-    return true;
 }
 
 void UIManager::handleInput(sf::Event event) {
