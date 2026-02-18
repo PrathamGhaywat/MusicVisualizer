@@ -16,7 +16,7 @@ Visualizer::Visualizer(int numBars, int windowWidth, int windowHeight) {
     }
 }
 
-void Visualizer::update(const std::vector<float>& frequencies) {
+void Visualizer::update(const std::vector<float>& frequencies, float deltaTime) {
     for (size_t i = 0; i < bars.size() && i < frequencies.size(); i++) {
         float targetHeight = std::min(frequencies[i] * 5000, 800.0f);
         
@@ -38,12 +38,28 @@ void Visualizer::update(const std::vector<float>& frequencies) {
             barColor = sf::Color::Red;  
         }
         bars[i].setFillColor(barColor);
-    }
+
+         //emit particles frome bar if moving
+        if (newHeight > 10.0f) {
+            for (int p = 0; p < 2; p++) {
+                sf::Vector2f barCenter(bars[i].getPosition().x + bars[i].getSize().x / 2.0f,
+                                                    bars[i].getPosition().y);
+                sf::Vector2f particleVelocity(0.0f, -200.0f); //move upward
+                particles.emplace_back(barCenter, particleVelocity, barColor, 2.0f);  
+            }
+        }
+
+        
+    }   
 }
 
 void Visualizer::draw(sf::RenderWindow& window) {
-    std::cout << "Drawing " << bars.size() << " bars\n";
     for (auto& bar : bars) {
         window.draw(bar);
+    }
+    
+    // Draw particles
+    for (auto& particle : particles) {
+        particle.draw(window);
     }
 }

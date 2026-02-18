@@ -25,7 +25,11 @@ int main() {
     //starts playing
     audioProcessor.play();
 
+    sf::Clock clock;
+
     while (window.isOpen()) {
+        float deltaTime = clock.restart().asSeconds();
+
         while (const auto event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>()) {
                 window.close();
@@ -36,7 +40,7 @@ int main() {
         std::vector<float> frequencies = audioProcessor.getFrequencyData();
 
         //update visualizer with frequnecy data
-        visualizer.update(frequencies);
+        visualizer.update(frequencies, deltaTime);
 
         std::cout << "Frequencies size: " << frequencies.size();
         if (!frequencies.empty()) {
